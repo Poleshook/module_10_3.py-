@@ -24,7 +24,7 @@ class Bank:
             if jj <= self.balance:
                 self.balance -= jj
                 print(f'Снятие: {jj}. Баланс: {self.balance}')
-            elif jj > self.balance:
+            else jj > self.balance:
                 print('Запрос отклонён, недостаточно средств')
                 self.lock.acquire()
 
