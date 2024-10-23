@@ -1,33 +1,36 @@
-from random import randint
-from time import sleep
+from random import randint # Для генерации случайного целого числа используйте функцию randint из модуля random.
+from time import sleep # Для ожидания используйте функцию sleep из модуля time.
 import threading
 from threading import Lock
 
-class Bank:
-    def __init__(self):
-        self.balance = 0
-        self.lock = Lock()
+class Bank: # Необходимо создать класс Bank
+    def __init__(self): # Атрибуты объекта:
+        self.balance = 0 # balance - баланс банка (int)
+        self.lock = Lock() # lock - объект класса Lock для блокировки потоков.
 
-    def deposit(self):
-        for i in range(100):
-            j = randint(50, 500)
-            self.balance += j
-            if self.balance >= 500 and self.lock.locked():
-                self.lock.release()
-            print(f'Пополнение: {j}. Баланс: {self.balance}')
-            sleep(0.001)
+    def deposit(self): # Метод deposit:
+        for i in range(100): # Будет совершать 100 транзакций пополнения средств.
+            j = randint(50, 500) # Пополнение - это увеличение баланса на случайное целое число от 50 до 500.
+            self.balance += j # Пополнение баланса
+            if self.balance >= 500 and self.lock.locked(): # Если баланс больше или равен 500 и замок lock заблокирован - lock.locked(),
+                self.lock.release() # то разблокировать его методом release.
+            print(f'Пополнение: {j}. Баланс: {self.balance}') # После увеличения баланса должна выводится строка "Пополнение: <случайное число>. Баланс: <текущий баланс>".
+            sleep(0.001) # Также после всех операций поставьте ожидание в 0.001 секунды, тем самым имитируя скорость выполнения пополнения.
 
-    def take(self):
-        for ii in range(100):
-            jj = randint(50, 500)
-            print(f'Запрос на {jj}')
-            if jj <= self.balance:
-                self.balance -= jj
-                print(f'Снятие: {jj}. Баланс: {self.balance}')
-            else jj > self.balance:
-                print('Запрос отклонён, недостаточно средств')
-                self.lock.acquire()
+    def take(self): # Метод take:
+        for ii in range(100): # Будет совершать 100 транзакций снятия.
+            jj = randint(50, 500) # Снятие - это уменьшение баланса на случайное целое число от 50 до 500.
+            print(f'Запрос на {jj}') # В начале должно выводится сообщение "Запрос на <случайное число>".
+            if jj <= self.balance: # Далее производится проверка: если случайное число меньше или равно текущему балансу,
+                self.balance -= jj # то произвести снятие, уменьшив balance на соответствующее число
+                print(f'Снятие: {jj}. Баланс: {self.balance}') # и вывести на экран "Снятие: <случайное число>. Баланс: <текущий баланс>".
+            else: # Если случайное число оказалось больше баланса
+                print('Запрос отклонён, недостаточно средств') # то вывести строку "Запрос отклонён, недостаточно средств"
+                self.lock.acquire() # и заблокировать поток методом acquire.
 
+'''
+Далее создайте объект класса Bank и создайте 2 потока для его методов deposit и take. Запустите эти потоки.
+'''
 
 bk = Bank()
 
@@ -39,4 +42,12 @@ th2.start()
 th1.join()
 th2.join()
 
+'''
+После конца работы потоков выведите строку: "Итоговый баланс: <баланс объекта Bank>".
+'''
+
 print(f'Итоговый баланс: {bk.balance}')
+
+'''
+По итогу вы получите скрипт разблокирующий поток до баланса равному 500 и больше или блокирующий, когда происходит попытка снятия при недостаточном балансе.
+'''
